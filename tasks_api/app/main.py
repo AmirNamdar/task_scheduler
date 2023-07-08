@@ -50,7 +50,9 @@
 
 
 from dotenv import load_dotenv
+
 load_dotenv()
+
 import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -78,9 +80,12 @@ for router in routers:
 
 
 async def start_db():
+    from data_access_layer.postgres import models
+
     async with engine.begin() as conn:
-        conn = await conn.execution_options(schema_translate_map={None: "gringotts"})
+        conn = await conn.execution_options()
         await conn.run_sync(Base.metadata.create_all)
+
     await engine.dispose()
 
 

@@ -1,7 +1,4 @@
-import sqlalchemy
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import UUID, Column, Integer, ForeignKey, DateTime, String
 
 from data_access_layer.postgres.base_model import Base
@@ -11,7 +8,6 @@ from uuid import uuid4
 
 class Task(Base):
     __tablename__ = "task"
-    __table_args__ = {"schema": "tasks"}
 
     id = Column(
         UUID(as_uuid=True),
@@ -28,7 +24,6 @@ class Task(Base):
 
 class TaskExecution(Base):
     __tablename__ = "task_execution"
-    __table_args__ = {"schema": "tasks"}
 
     id = Column(
         UUID(as_uuid=True),
@@ -39,7 +34,7 @@ class TaskExecution(Base):
 
     task_id = Column(
         UUID(as_uuid=True),
-        ForeignKey("tasks.task.id"),
+        ForeignKey("task.id"),
         nullable=False,
         primary_key=False,
         unique=False,
