@@ -8,6 +8,10 @@ services:
       - "8000:8000"
     volumes:
       - ./tasks_api/app:/app
+    env_file:
+      - ./tasks_api/.env
+    depends_on:
+      - tasks-db
 
   tasks-db:
     container_name: tasks-postgres
@@ -16,7 +20,7 @@ services:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     env_file:
-      - .env
+      - ./tasks_api/.env
     ports:
       - "5432:5432"
     volumes:
