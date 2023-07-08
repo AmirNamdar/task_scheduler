@@ -1,8 +1,7 @@
-
 # 1. A “Set Timer” endpoint
 
 # ○ Returns a JSON object with the amount of seconds left until the timer expires and
-    # an id for querying the timer in the future.
+# an id for querying the timer in the future.
 
 # ○ The endpoint should start an internal timer, which fires a webhook to the defined
 # URL when the timer expires. The webhook should be a POST HTTP call with an
@@ -50,11 +49,14 @@
 # ● Please do not hesitate to contact me if you have any questions. Good luck!
 
 
+from dotenv import load_dotenv
+load_dotenv()
 import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from data_access_layer.postgres.database import engine
+from data_access_layer.postgres.base_model import Base
 from api_layer.routes.timer_router import timer_router
-
 
 logger = logging.getLogger(__name__)
 SERVICE_NAME = "scheduling-service"
@@ -73,3 +75,21 @@ routers = [timer_router]
 
 for router in routers:
     app.include_router(router=router)
+
+
+async def start_db():
+    async with engine.begin() as conn:
+        conn = await conn.execution_options(schema_translate_map={None: "gringotts"})
+        await conn.run_sync(Base.metadata.create_all)
+    await engine.dispose()
+
+
+@app.on_event("startup")
+async def startup_event():
+    logger.info("Starting up...")
+    await start_db()
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    logger.info("Shutting down...")

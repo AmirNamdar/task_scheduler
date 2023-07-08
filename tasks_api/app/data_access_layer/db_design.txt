@@ -1,9 +1,9 @@
 Task
-    ID
-    run_at
-    status (Scheduled, Running, Success, Failed)
-    status_changed_at
-    tries
+    V ID
+    V run_at
+    V status (Scheduled, Running, Success, Failed)
+    V status_changed_at
+    V tries
 
 TaskExecution
     id
