@@ -1,0 +1,67 @@
+version: "3.6"
+services:
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    volumes:
+      - badger_data:/badger
+    ports:
+      - "16686:16686"
+      - "14250"
+      - "0.0.0.0:14268:14268"
+    environment:
+      - SPAN_STORAGE_TYPE=badger
+      - BADGER_EPHEMERAL=false
+      - BADGER_DIRECTORY_VALUE=/badger/data
+      - BADGER_DIRECTORY_KEY=/badger/key
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana-oss:latest
+    ports:
+      - 3000:3000
+    volumes:
+      - ./datasource.yml:/etc/grafana/provisioning/datasource.yml
+    env_file:
+      - ./config.monitoring
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  collector:
+    image: otel/opentelemetry-collector-contrib
+    command: ["--config=/otel-local-config.yml"]
+    volumes:
+      - ./collector-config.yml:/otel-local-config.yml
+    ports:
+      - "0.0.0.0:4317:4317" # OTLP receiver
+      - "0.0.0.0:8889:8889" # METRICS
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - jaeger
+
+networks:
+  default:
+    name: tracing-network
+
+volumes:
+  badger_data:
+  prometheus_data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./prometheus_data
+  grafana_data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./grafana_data

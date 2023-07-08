@@ -1,0 +1,11 @@
+services:
+  tasks-api:
+    container_name: tasks-api
+    build:
+      context: ./tasks_api
+      target: development
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./tasks_api/app:/app
+

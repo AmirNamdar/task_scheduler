@@ -1,0 +1,65 @@
+[tool.poetry]
+name = "scheduling-service"
+version = "0.1.0"
+description = ""
+authors = ["AmirNamdar <90144822+AmirNamdar@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "app"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.96.1"
+uvicorn = "^0.22.0"
+
+
+opentelemetry-sdk = "^1.18.0"
+uvloop = "^0.17.0"
+opentelemetry-distro = "^0.39b0"
+opentelemetry-instrumentation = "^0.39b0"
+opentelemetry-instrumentation-fastapi = "^0.39b0"
+opentelemetry-instrumentation-requests = "^0.39b0"
+opentelemetry-instrumentation-logging = "^0.39b0"
+opentelemetry-api = "^1.18.0"
+opentelemetry-exporter-otlp-proto-grpc = "^1.18.0"
+pydantic = "^1.10.9"
+requests = "^2.31.0"
+prometheus-fastapi-instrumentator = "^6.0.0"
+httpx = "^0.24.1"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.3.0"
+isort = "^5.12.0"
+pytest = "^7.3.2"
+coverage = "^7.2.7"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.black]
+# https://github.com/psf/black
+line-length = 88
+target_version = ['py38']
+exclude = '''
+(
+  /(
+    \.git
+    | \.mypy_cache
+    | \.pytest_cache
+    | htmlcov
+    | venv
+    | .venv
+  )/
+)
+'''
+
+[tool.isort]
+# https://github.com/timothycrosley/isort
+# https://github.com/timothycrosley/isort/wiki/isort-Settings
+line_length = 88
+indent = '    '
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
