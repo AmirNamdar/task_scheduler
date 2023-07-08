@@ -1,13 +1,9 @@
-#  Home Assignment for Lemonade - Timers
-
-# This assignment is about executing delayed tasks, a common scenario you might encounter in this role.
-# The challenge is designed to take 3–4 hours to complete. We don’t enforce any strict time limits, so you can choose when you prefer to dedicate time for the challenge and in how many sessions. You may add any extra functionality you want—however, this will not affect your evaluation.
-# Okay, here’s your mission: We would like to create a service that allows us to easily execute scheduled tasks. For simplicity, let’s assume that tasks can be triggered by accessing a web URL. You create a task by providing a URL and the desired time to run. When the specified time arrives, the service will call the URL.
 
 # 1. A “Set Timer” endpoint
-# ○ Receives a JSON object containing hours, minutes, seconds, and a web url.
+
 # ○ Returns a JSON object with the amount of seconds left until the timer expires and
-# an id for querying the timer in the future.
+    # an id for querying the timer in the future.
+
 # ○ The endpoint should start an internal timer, which fires a webhook to the defined
 # URL when the timer expires. The webhook should be a POST HTTP call with an
 # empty body.

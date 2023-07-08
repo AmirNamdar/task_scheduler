@@ -38,11 +38,11 @@ class HandlerScheduleNewTask:
     def handle(input: SetNewTimerInput) -> TaskModel:
         """Handle SetNewTimerInput
         :param input: SetNewTimerInput
-        :return: None
+        :return: TaskModel
         :raises: InvalidInputError
         """
         SetNewTimerRequestValidator.validate(input)
-        # 2. create timer
-        # 3. return timer id and time left
-        # TODO
+
+        # TODO: Create a Task
+        # TODO: return a TaskModel
         return TaskModel(id="1", time_left=14401)
