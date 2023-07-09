@@ -6,6 +6,7 @@ class SetNewTimerInput(BaseModel):
     minutes: int
     seconds: int
     url: str
+    retriable: bool = True
 
 
 class TaskModel(BaseModel):

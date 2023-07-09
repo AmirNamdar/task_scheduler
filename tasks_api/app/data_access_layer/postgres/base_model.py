@@ -85,4 +85,5 @@ class Base:
                     detail=repr(exception),
                 ) from exception
         finally:
-            await db.close()
+            # await db.close()
+            pass

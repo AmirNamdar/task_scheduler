@@ -32,7 +32,7 @@ async def set_new_timer(input: SetNewTimerAPIInput):
         #  invalid input 2: bad time
         #  valid input: assert response is correct
 
-        data = LogicLayer.schedule_task(input)
+        data = await LogicLayer.schedule_task(input)
         return ResponseGeneratorScheduleNewTask.success(data)
     except InvalidInputError as exc:
         return ResponseGeneratorScheduleNewTask.invalid_input(exception=exc)

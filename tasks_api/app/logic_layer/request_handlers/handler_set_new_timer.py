@@ -1,13 +1,14 @@
+from datetime import datetime, timedelta
 from logic_layer.errors import (
     InvalidHoursError,
     InvalidMinutesError,
     InvalidSecondsError,
     InvalidUrlError,
 )
-from logic_layer.logic_layer_interfaces import SetNewTimerInput
 from logic_layer.logic_layer_interfaces import TaskModel
-
 from utils.validators import DataValidator
+from data_access_layer.tasks_db_access import TasksDBAccess
+from logic_layer.logic_layer_interfaces import SetNewTimerInput
 
 
 class SetNewTimerRequestValidator:
@@ -34,8 +35,8 @@ class SetNewTimerRequestValidator:
 
 
 class HandlerScheduleNewTask:
-    @staticmethod
-    def handle(input: SetNewTimerInput) -> TaskModel:
+    @classmethod
+    async def handle(cls, input: SetNewTimerInput) -> TaskModel:
         """Handle SetNewTimerInput
         :param input: SetNewTimerInput
         :return: TaskModel
@@ -43,6 +44,31 @@ class HandlerScheduleNewTask:
         """
         SetNewTimerRequestValidator.validate(input)
 
+        execute_at = cls._get_execute_at(input)
+        task = await TasksDBAccess.task.create(
+            url=input.url,
+            execute_at=execute_at,
+            retriable=input.retriable,
+        )
+
         # TODO: Create a Task
         # TODO: return a TaskModel
         return TaskModel(id="1", time_left=14401)
+
+    @staticmethod
+    def _get_execute_at(input: SetNewTimerInput) -> datetime:
+        now = datetime.now()
+        if now.hour > input.hours or (
+            now.hour == input.hours and now.minute > input.minutes
+        ):
+            execute_at = now + timedelta(days=1)
+        else:
+            execute_at = datetime(
+                year=now.year,
+                month=now.month,
+                day=now.day,
+                hour=input.hours,
+                minute=input.minutes,
+                second=input.seconds,
+            )
+        return execute_at

@@ -1,5 +1,5 @@
 from sqlalchemy.orm import relationship
-from sqlalchemy import UUID, Column, Integer, ForeignKey, DateTime, String
+from sqlalchemy import UUID, Boolean, Column, Integer, ForeignKey, DateTime, String
 
 from data_access_layer.postgres.base_model import Base
 
@@ -15,11 +15,13 @@ class Task(Base):
         default=uuid4,
         primary_key=True,
     )
-
+    url = Column(String, nullable=False)
     attempts = Column(Integer, nullable=False, primary_key=False, unique=False)
     status = Column(String, nullable=False)
-    run_at = Column(DateTime, nullable=False)
+    execute_at = Column(DateTime, nullable=False)
+    retriable = Column(Boolean, nullable=False, default=True)
     changed_at = Column(DateTime, nullable=True)
+    executions = relationship("TaskExecution", back_populates="task")
 
 
 class TaskExecution(Base):
@@ -40,7 +42,7 @@ class TaskExecution(Base):
         unique=False,
     )
 
-    task = relationship("Task", back_populates="task_execution")
+    task = relationship("Task", back_populates="executions")
     end = Column(DateTime, nullable=True)
     worker = Column(String, nullable=False)
     start = Column(DateTime, nullable=False)
