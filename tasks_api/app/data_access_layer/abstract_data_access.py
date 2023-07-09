@@ -9,6 +9,7 @@ class AbstractTasksDBAccess:
         execute_at: datetime,
         url: str,
         retriable: bool,
+        db_session,
         status: TaskStatus = TaskStatus.SCHEDULED,
     ):
         pass

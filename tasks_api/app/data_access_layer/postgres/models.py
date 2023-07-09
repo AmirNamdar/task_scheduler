@@ -1,3 +1,4 @@
+from datetime import date, datetime
 from sqlalchemy.orm import relationship
 from sqlalchemy import UUID, Boolean, Column, Integer, ForeignKey, DateTime, String
 
@@ -16,12 +17,19 @@ class Task(Base):
         primary_key=True,
     )
     url = Column(String, nullable=False)
-    attempts = Column(Integer, nullable=False, primary_key=False, unique=False)
+    attempts = Column(
+        Integer, nullable=False, primary_key=False, unique=False, default=0
+    )
     status = Column(String, nullable=False)
     execute_at = Column(DateTime, nullable=False)
     retriable = Column(Boolean, nullable=False, default=True)
     changed_at = Column(DateTime, nullable=True)
     executions = relationship("TaskExecution", back_populates="task")
+
+    # TODO: move to dataclass
+    @property
+    def time_left_in_seconds(self):
+        return (datetime.now() - self.execute_at).total_seconds()
 
 
 class TaskExecution(Base):

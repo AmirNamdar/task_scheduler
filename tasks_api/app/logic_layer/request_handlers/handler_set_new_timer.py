@@ -36,7 +36,7 @@ class SetNewTimerRequestValidator:
 
 class HandlerScheduleNewTask:
     @classmethod
-    async def handle(cls, input: SetNewTimerInput) -> TaskModel:
+    async def handle(cls, input: SetNewTimerInput, db_session) -> TaskModel:
         """Handle SetNewTimerInput
         :param input: SetNewTimerInput
         :return: TaskModel
@@ -45,15 +45,15 @@ class HandlerScheduleNewTask:
         SetNewTimerRequestValidator.validate(input)
 
         execute_at = cls._get_execute_at(input)
+        # TODO: should return agnostic dataclass, not sqlalchemy model
         task = await TasksDBAccess.task.create(
             url=input.url,
             execute_at=execute_at,
             retriable=input.retriable,
+            db_session=db_session,
         )
 
-        # TODO: Create a Task
-        # TODO: return a TaskModel
-        return TaskModel(id="1", time_left=14401)
+        return TaskModel(id=str(task.id), time_left=task.time_left_in_seconds)
 
     @staticmethod
     def _get_execute_at(input: SetNewTimerInput) -> datetime:

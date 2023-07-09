@@ -13,12 +13,12 @@ from logic_layer.logic_layer_interfaces import (
 
 class LogicLayer:
     @staticmethod
-    async def schedule_task(input: SetNewTimerInput) -> TaskModel:
+    async def schedule_task(input: SetNewTimerInput, db_session) -> TaskModel:
         """Schedule a new task
         :param input: SetNewTimerInput
         :return: task id
         """
         try:
-            return await HandlerScheduleNewTask.handle(input)
+            return await HandlerScheduleNewTask.handle(input, db_session)
         except Exception as exc:
             raise exc

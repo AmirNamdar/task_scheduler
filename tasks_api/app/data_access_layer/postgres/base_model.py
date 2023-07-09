@@ -1,10 +1,11 @@
 from typing import Any
 
 from asyncpg import UniqueViolationError
-from fastapi import HTTPException, status
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import as_declarative, declared_attr
+
+from data_access_layer.errors import DBLayerError
 
 
 @as_declarative()
@@ -36,10 +37,8 @@ class Base:
         try:
             db_session.add(self)
             return await db_session.commit()
-        except SQLAlchemyError as ex:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=repr(ex)
-            ) from ex
+        except SQLAlchemyError as exc:
+            raise DBLayerError(message=repr(exc)) from exc
 
     async def delete(self, db_session: AsyncSession):
         """
@@ -51,10 +50,8 @@ class Base:
             await db_session.delete(self)
             await db_session.commit()
             return True
-        except SQLAlchemyError as ex:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=repr(ex)
-            ) from ex
+        except SQLAlchemyError as exc:
+            raise DBLayerError(message=repr(exc)) from exc
 
     async def update(self, db: AsyncSession, **kwargs):
         """
@@ -67,23 +64,18 @@ class Base:
             for k, v in kwargs.items():
                 setattr(self, k, v)
             return await db.commit()
-        except SQLAlchemyError as ex:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=repr(ex)
-            ) from ex
+        except SQLAlchemyError as exc:
+            raise DBLayerError(message=repr(exc)) from exc
 
     async def save_or_update(self, db: AsyncSession):
         try:
             db.add(self)
             return await db.commit()
-        except IntegrityError as exception:
-            if isinstance(exception.orig, UniqueViolationError):
+        except IntegrityError as exc:
+            if isinstance(exc.orig, UniqueViolationError):
                 return await db.merge(self)
             else:
-                raise HTTPException(
-                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                    detail=repr(exception),
-                ) from exception
+                raise DBLayerError(message=repr(exc)) from exc
         finally:
-            # await db.close()
+            await db.close()
             pass
