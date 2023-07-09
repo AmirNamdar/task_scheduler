@@ -41,6 +41,7 @@ def test_invalid_hours():
     assert "error_code" in response_data["data"]
     assert "message" in response_data["data"]
 
+
 def test_invalid_minutes():
     response = client.post(
         "/timers",
@@ -59,6 +60,7 @@ def test_invalid_minutes():
     assert "error_code" in response_data["data"]
     assert "message" in response_data["data"]
 
+
 def test_invalid_seconds():
     response = client.post(
         "/timers",
@@ -76,6 +78,7 @@ def test_invalid_seconds():
     assert response_data["data"]["field"] == "seconds"
     assert "error_code" in response_data["data"]
     assert "message" in response_data["data"]
+
 
 def test_invalid_url():
     response = client.post(
